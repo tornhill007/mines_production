@@ -1,0 +1,91 @@
+.itemCell {
+    background-color: #c7c7c7;
+    width: 24px;
+    font-size: 10px;
+    height: 24px;
+}
+
+/*.emptyOpened {*/
+/*    background-color: #e8e8e8;*/
+/*}*/
+
+.blownUpBackground {
+    background-color: red;
+}
+
+.activeUser {
+    color: green;
+}
+
+.activeMove {
+    background-color: #2c536c;
+}
+
+.unclickableTable {
+    pointer-events: none
+}
+
+.itemHistory {
+    cursor: pointer;
+}
+
+.itemHistory:hover {
+    color: #2c536c;
+}
+
+.wrapMain {
+    display: flex;
+    justify-content: center;
+}
+
+.backgroundred {
+    background-color: red;
+    opacity: 0.8;
+}
+
+.backgroundblue {
+    background-color: blue;
+    opacity: 0.8;
+}
+
+.backgroundgreen {
+    background-color: green;
+    opacity: 0.8;
+
+}
+
+.backgroundyellow {
+    background-color: yellow;
+    opacity: 0.8;
+}
+
+.backgroundbrown {
+    background-color: brown;
+    opacity: 0.8;
+}
+
+.backgroundpink {
+    background-color: pink;
+    opacity: 0.8;
+}
+
+.backgroundpurple {
+    background-color: #402955;
+    /*#e8e8e8*/
+    opacity: 0.9;
+}
+
+.backgroundorange {
+    background-color: orange;
+    opacity: 0.8;
+}
+
+.backgrounddarkred {
+    background-color: darkred;
+    opacity: 0.8;
+}
+
+.backgrounddarkgreen {
+    background-color: darkgreen;
+    opacity: 0.8;
+}
