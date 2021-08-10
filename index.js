@@ -29,12 +29,13 @@ const doActionForLogs = require('./helpers/doActionForLogs');
 const {Sequelize} = require('sequelize');
 const Op = Sequelize.Op;
 const exitFromGame = require('./helpers/exitFromGame');
-const serveStatic = require('serve-static')
+const serveStatic = require('serve-static');
+const path = require('path');
 
 //Test DB
 app.use(cors());
 app.use(express.json());
-app.use(serveStatic(__dirname, '/build'));
+app.use(serveStatic(path.join(__dirname, 'build')));
 
 sequelize.authenticate().then(() => {
   console.log("Database connected...")
@@ -1147,7 +1148,7 @@ io.on("connection", async (socket) => {
   })
 });
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 5050;
 
 httpServer.listen(port, () => {
   console.log("Server has started on 8080 port")

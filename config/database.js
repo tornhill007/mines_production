@@ -1,7 +1,6 @@
 const {Sequelize} = require('sequelize');
 require('dotenv').config();
 
-
 // module.exports = new Sequelize('mines', 'andrewkomar', '12345', {
 //   host: 'localhost',
 //   dialect: 'postgres',
