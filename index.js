@@ -34,7 +34,7 @@ const serveStatic = require('serve-static')
 //Test DB
 app.use(cors());
 app.use(express.json());
-app.use(serveStatic(__dirname, '/minesweeper-client/build'));
+app.use(serveStatic(__dirname, '/build'));
 
 sequelize.authenticate().then(() => {
   console.log("Database connected...")
