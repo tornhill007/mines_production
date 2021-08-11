@@ -81,9 +81,8 @@ io.on("connection", async (socket) => {
     }]
   })
 
-  if (!userTab) {
-    user.createTab({tabid: socket.handshake.query.tabId});
-  }
+  user.createTab({tabid: socket.handshake.query.tabId});
+
 
   let tabInGame = await Games.findOne({
     include: [{
@@ -145,22 +144,7 @@ io.on("connection", async (socket) => {
       }
     })
 
-    let socketsList = Object.values(socketsMap);
-
-    let gameOwner = await Users.findOne({
-      where: {
-        userid: game.owner
-      }
-    })
-
-    socketsList.forEach(item => {
-      // item.emit('game/list', activeGamesList);
-      // if(usersStateMap[tabInGame.gameid].length > 0) {
-      //   // item.emit('game/listReadiness', {listReadiness: usersStateMap[tabInGame.gameid], gameOwner})
-      // }
-    })
-
-    socket.emit("game/refresh", {gameId: gameid, game: game})
+    // socket.emit("game/refresh", {gameId: gameid, game: game})
     socket.emit('game/new', {dataTable: gamesMap[gameid], gameId: gameid, game: game})
     socket.emit('game/users', {usersUniq, gameid: gameid});
     socket.emit('game/listLogs', {history})
@@ -182,21 +166,8 @@ io.on("connection", async (socket) => {
     }]
   })
 
-  // let listUsersInGame = await Tabs.findAll({
-  //   where: {
-  //     gameid: gameId.gameid
-  //   }
-  // })
+  let allGames = await Games.findAll();
 
-  let allGames = await Games.findAll(
-    //   {
-    //   where: {
-    //     isfinished: false
-    //   }
-    // }
-  );
-
-  // allGames.forEach(item => {
   let usersInGames = {};
   for (let i = 0; i < allGames.length; i++) {
     let listUsersInGame = await Tabs.findAll({
@@ -723,8 +694,6 @@ io.on("connection", async (socket) => {
           delete usersStateMap[gameId.gameid][tab.tabid]
         }
       })
-      // delete usersStateMap[gameId.gameid][socket.handshake.query.tabId]
-
 
       let tabsGames = await Tabs.findAll({
         where: {
@@ -744,17 +713,6 @@ io.on("connection", async (socket) => {
       let tabsArr = tabsInGame.map(item => {
         return item.tabid
       })
-
-
-      // let tabsGames = await Tabs.findAll({
-      //   where: {
-      //     gameid: gameId.gameid,
-      //     userid: socket.user.userid
-      //   }
-      // })
-      //
-      // let tabsArr = tabsGames.map(item => item.tabid);
-
 
       tabsArr.forEach(item => {
         game.createViewer({tabid: item})
@@ -823,7 +781,6 @@ io.on("connection", async (socket) => {
           }]
         });
 
-
         let tabsGames = await Tabs.findAll({
           where: {
             userid: playerWinner.userid
@@ -843,18 +800,6 @@ io.on("connection", async (socket) => {
           return item.tabid
         })
 
-        //
-        // let userGames = await Users.findOne({
-        //   include: [{
-        //     model: Tabs,
-        //     required: true,
-        //     where: {
-        //       userid: socket.user.userid,
-        //       tabid: tabsArr
-        //     }
-        //   }]
-        // })
-
         tabsArr.forEach(item => {
           game.createViewer({
             tabid: item
@@ -869,19 +814,8 @@ io.on("connection", async (socket) => {
         game.isplaying = false;
         // socketsMap[arr[0]].emit("game/win", {win: true})
       }
-
-      // let viewers = await Viewers.findAll({
-      //   where: {
-      //     gameid: game.gameid
-      //   }
-      // })
-
     }
-    let gameMove = await Moves.findOne({
-      where: {
-        gameid: gameId.gameid
-      }
-    })
+
     let arr = Object.keys(usersStateMap[gameId.gameid]);
     if (arr.length <= +game.moveposition + 1) {
       game.moveposition = 0;
@@ -1112,43 +1046,49 @@ io.on("connection", async (socket) => {
 
   socket.on('disconnect', async (data) => {
 
-    let tabInGame = await Games.findOne({
-      include: [{
-        model: Tabs,
-        required: true,
-        where: {
-          tabid: socket.handshake.query.tabId
-        }
-      }]
-    })
-
-    let viewerInGame = await Games.findOne({
-      include: [{
-        model: Viewers,
-        required: true,
-        where: {
-          tabid: socket.handshake.query.tabId
-        }
-      }]
-    })
-
-    if (tabInGame || viewerInGame) {
-      let gameid = tabInGame ? tabInGame.gameid : viewerInGame.gameid
-      let game = await Games.findOne({
-        where: {
-          gameid: gameid
-        }
-      })
-      if (game.isplaying || game.isfinished) {
-        return
-      }
-    }
+    // await Tabs.destroy({
+    //   where: {
+    //     tabid: socket.handshake.query.tabId
+    //   }
+    // })
+    //
+    // let tabInGame = await Games.findOne({
+    //   include: [{
+    //     model: Tabs,
+    //     required: true,
+    //     where: {
+    //       tabid: socket.handshake.query.tabId
+    //     }
+    //   }]
+    // })
+    //
+    // let viewerInGame = await Games.findOne({
+    //   include: [{
+    //     model: Viewers,
+    //     required: true,
+    //     where: {
+    //       tabid: socket.handshake.query.tabId
+    //     }
+    //   }]
+    // })
+    //
+    // if (tabInGame || viewerInGame) {
+    //   let gameid = tabInGame ? tabInGame.gameid : viewerInGame.gameid
+    //   let game = await Games.findOne({
+    //     where: {
+    //       gameid: gameid
+    //     }
+    //   })
+    //   if (game.isplaying || game.isfinished) {
+    //     return
+    //   }
+    // }
 
     await exitFromGame(socket);
   })
 });
 
-const port = process.env.PORT || 5050;
+const port = process.env.PORT || 8080;
 
 httpServer.listen(port, () => {
   console.log("Server has started on 8080 port")

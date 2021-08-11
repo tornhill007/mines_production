@@ -1,4 +1,6 @@
 import React from "react";
+import optionsArr from '../../../common/optionsArr';
+import minesPercents from '../../../common/minesPercents';
 import {setGameInfo, setGameInfoAndSetTable} from "../../../redux/reducers/gameReducer";
 
 class EditModal extends React.Component {
@@ -21,8 +23,11 @@ class EditModal extends React.Component {
   }
 
   onChangeFieldSize = (e) => {
+    let arrValue = e.target.value.split('x');
+    console.log(arrValue);
     this.setState({
-      fieldSize: e.target.value
+      fieldSize: `${arrValue[0]}x${arrValue[1]}`,
+      minesAmount: arrValue[2]
     })
   }
 
@@ -39,19 +44,18 @@ class EditModal extends React.Component {
   }
 
   createGame = () => {
-    console.log("this.props.socket", this.props.socket)
+    console.log(this.state)
     this.props.socket.emit('game/create', {gameInfo: this.state}, (data) => {
-      console.log(['data'], data)
     })
-    console.log("Form_Data", this.state);
+  }
+
+  calcMines = (name, level) => {
+    let arrSize = name.split('x');
+    return Math.round(arrSize[0]*arrSize[1] * minesPercents[level] / 100)
   }
 
 
   render() {
-    console.log(this.state.gameName)
-    console.log(this.state.minesAmount)
-    console.log(this.state.maxPlayers)
-    console.log(this.state.fieldSize)
 
     let regex = /^([1-9]|10)$/;
 
@@ -59,14 +63,12 @@ class EditModal extends React.Component {
       <div>
         <div className="modal-body">
           <input value={this.state.gameName} onChange={this.onChangeGameName} placeholder={"game name"} type="text"/>
-          <select onChange={this.onChangeFieldSize} name="select">
-            <option selected disabled={true}>Choose field size</option>
-            <option value={'9x9'}>9x9</option>
-            <option value={'16x16'}>16x16</option>
-            <option value={'30x16'}>30x16</option>
+          <select defaultValue={'DEFAULT'} onChange={this.onChangeFieldSize} name="select">
+            <option value={'DEFAULT'} disabled={true}>Choose field size</option>
+            {optionsArr.map((item,index) => <option key={index} value={`${item.name}x${this.calcMines(item.name, item.level)}`}>{item.name} mines: {this.calcMines(item.name, item.level)} {item.level}</option>)}
           </select>
-          <input value={this.state.minesAmount} onChange={this.onChangeMinesAmount} placeholder={"amount of mines"}
-                 type="text"/>
+          {/*<input value={this.state.minesAmount} onChange={this.onChangeMinesAmount} placeholder={"amount of mines"}*/}
+          {/*       type="text"/>*/}
           <input value={this.state.maxPlayers} onChange={this.onChangeMaxPlayers} placeholder={"max players (1-10)"}
                  type="text"/>
         </div>

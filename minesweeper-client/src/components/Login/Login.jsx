@@ -60,8 +60,6 @@ class Login extends React.Component {
 
     render() {
 
-    console.log("LOOOGIIIIIIIIIIIIIIN");
-
     return <div className={classes.wrapMain}>
         <div title={'Home'} className={classes.exit}><NavLink to={'/'}><FontAwesomeIcon className={`${classes.marginHome} fa-lg`} icon={faHome}/></NavLink></div>
         <div className={classes.wrapper}>

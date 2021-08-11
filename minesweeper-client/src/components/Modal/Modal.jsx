@@ -9,7 +9,6 @@ class Modal extends React.Component {
 
     render() {
         const {isOpen, content} = this.props.modalPage;
-        console.log("content", content);
         if (!isOpen) return null;
 
         return (

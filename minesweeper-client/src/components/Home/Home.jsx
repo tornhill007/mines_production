@@ -16,18 +16,15 @@ class Home extends React.Component {
   joinToGame = (gameId) => {
     this.props.setIsReady({isReady: false})
     this.props.socket.emit('game/join', {gameId}, (data) => {
-      console.log(['data'], data)
     })
   }
 
   joinToGameAsViewer = (gameId) => {
     this.props.socket.emit('game/join', {gameId, isViewer: true}, (data) => {
-      console.log(['data'], data)
     })
   }
 
   render() {
-    console.log("this.props.usersInRoom", this.props.usersInRoom)
     return (
       <div className={classes.wrapper}>
         <div className={classes.leftItem}>

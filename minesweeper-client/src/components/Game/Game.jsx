@@ -23,7 +23,6 @@ class Game extends React.Component {
 
   onReady = () => {
     this.props.socket.emit("game/readiness", {isReady: true, gameId: this.props.match.params.gameId}, (data) => {
-      console.log(['data'], data)
     })
     this.setState({
       isReady: true
@@ -32,7 +31,6 @@ class Game extends React.Component {
 
   onNotReady = () => {
     this.props.socket.emit("game/readiness", {isReady: false, gameId: this.props.match.params.gameId}, (data) => {
-      console.log(['data'], data)
     })
     this.setState({
       isReady: false
@@ -60,17 +58,11 @@ class Game extends React.Component {
   }
 
   render() {
-    console.log("listLogs", this.props.listLogs);
-    console.log("tableTwoDimensionalOPENED1", this.props);
-    console.log("tableTwoDimensionalOPENED", this.props.tableTwoDimensional);
-    console.log("background", classes[`background` + colorsArray[3 % 10]]);
-
     let isGameOver = this.props.isGameOver;
 
     const sendAction = (i, j) => {
       // this.props.checkCell(i, j)
       this.props.socket.emit("game/action", {i, j}, (data) => {
-        console.log(['data'], data)
       })
     }
 
@@ -99,20 +91,15 @@ class Game extends React.Component {
         <tr key={i}> {entry} </tr>
       );
     });
-    console.log("usersReadiness", this.props.usersReadiness)
-    console.log("usersInGame", this.props.gameOwner)
-    console.log("usersInRoom", this.props.usersInRoom)
-    console.log("informationGame", this.props.informationGame)
 
     let maxPlayers = this.props.gamesList.filter(item => {
       return item.gameid === this.props.match.params.gameId
     })
 
-    console.log("maxPlayers", maxPlayers)
     let isStarting = this.props.usersReadiness.find(item => {
       return !item.isReady
     })
-    console.log("isStarting", isStarting)
+
     let whoMove = this.props.usersReadiness.find(item => {
       return item.movePosition
     })
