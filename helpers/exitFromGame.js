@@ -296,12 +296,27 @@ module.exports = async (socket) => {
 
   let listTabsInGame = listUsersInGame.map(tab => tab.tabid)
 
+  let viewersAll = await Viewers.findAll({
+    where: {
+      gameid: gameid
+    }
+  });
+
+  let viewersTabs = viewersAll.map(item => item.tabid);
+
+  let newFilterList = listTabsInGame.filter(item => {
+    if(!viewersTabs.includes(item)) {
+      return true;
+    }
+  })
+
+
   let users = await Users.findAll({
     include: [{
       model: Tabs,
       required: true,
       where: {
-        tabid: listTabsInGame
+        tabid: newFilterList
       }
     }]
   })

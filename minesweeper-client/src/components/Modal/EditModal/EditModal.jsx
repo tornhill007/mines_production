@@ -9,10 +9,10 @@ class EditModal extends React.Component {
     super(props);
 
     this.state = {
-      fieldSize: null,
+      fieldSize: '3x3',
       gameName: '',
       maxPlayers: 10,
-      minesAmount: '',
+      minesAmount: 1,
     }
   }
 
