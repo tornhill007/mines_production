@@ -58,6 +58,9 @@ class Game extends React.Component {
   }
 
   render() {
+
+    console.log("this.props.usersReadiness", this.props.usersReadiness)
+    console.log("this.props.informationGame.isplaying", this.props.informationGame )
     let isGameOver = this.props.isGameOver;
 
     const sendAction = (i, j) => {

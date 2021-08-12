@@ -265,6 +265,9 @@ io.on("connection", async (socket) => {
         }
       };
 
+
+    socket.emit('game/info', {game: newGame})
+
       socketsList.forEach(item => {
         item.emit('game/list', activeGamesList);
         item.emit('game/users', {usersUniq: listUsersInGame, gameid: gameId});
@@ -1046,16 +1049,38 @@ io.on("connection", async (socket) => {
       }
     })
 
+    let allViewers = await Viewers.findAll({
+      where: {
+        gameid: data.gameId
+      }
+    })
+
+    let tabs = allViewers.map(item => {
+      return item.tabid
+    })
+
+    let usersTabs = await Users.findAll({
+      include: [{
+        model: Tabs,
+        required: true,
+        where: {
+          tabid: tabs
+        }
+      }]
+    })
+
     listUsersInGame.forEach(item => {
       socketsMap[item.tabid].emit('game/new', {dataTable, gameId: data.gameId});
       socketsMap[item.tabid].emit('game/listReadiness', {listReadiness: usersStateMap[data.gameId], gameOwner})
       socketsMap[item.tabid].emit('game/info', {game})
+      socketsMap[item.tabid].emit('game/listViewers', {listViewers: usersTabs})
     })
 
     viewers.forEach(item => {
       socketsMap[item.tabid].emit('game/new', {dataTable, gameId: data.gameId});
       socketsMap[item.tabid].emit('game/listReadiness', {listReadiness: usersStateMap[data.gameId], gameOwner})
       socketsMap[item.tabid].emit('game/info', {game})
+      socketsMap[item.tabid].emit('game/listViewers', {listViewers: usersTabs})
     })
 
   })
