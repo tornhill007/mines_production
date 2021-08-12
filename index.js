@@ -723,6 +723,7 @@ io.on("connection", async (socket) => {
             gameid: gameId.gameid
           }
         })
+        game.isfinished = true;
       }
 
       tabsArr.forEach(item => {
