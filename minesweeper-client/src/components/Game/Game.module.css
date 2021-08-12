@@ -39,53 +39,53 @@
 }
 
 .backgroundred {
-    background-color: red;
+    background-color: #f2abab;
     opacity: 0.8;
 }
 
 .backgroundblue {
-    background-color: blue;
+    background-color: #8989ff;
     opacity: 0.8;
 }
 
 .backgroundgreen {
-    background-color: green;
+    background-color: #4ebd4e;
     opacity: 0.8;
 
 }
-
+/*#4ebd4e*/
 .backgroundyellow {
-    background-color: yellow;
+    background-color: #e4e49b;
     opacity: 0.8;
 }
 
 .backgroundbrown {
-    background-color: brown;
+    background-color: #c59a9a;
     opacity: 0.8;
 }
-
+/*#e68395*/
 .backgroundpink {
     background-color: pink;
     opacity: 0.8;
 }
 
 .backgroundpurple {
-    background-color: #402955;
+    background-color: #c6a2f2;
     /*#e8e8e8*/
     opacity: 0.9;
 }
 
 .backgroundorange {
-    background-color: orange;
+    background-color: #e4be61;
     opacity: 0.8;
 }
 
 .backgrounddarkred {
-    background-color: darkred;
+    background-color: #61d0ee;
     opacity: 0.8;
 }
 
 .backgrounddarkgreen {
-    background-color: darkgreen;
+    background-color: #7ce67c;
     opacity: 0.8;
 }

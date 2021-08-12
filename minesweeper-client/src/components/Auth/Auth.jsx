@@ -20,6 +20,7 @@ import {
   setUsersListReadiness,
   setWin
 } from "../../redux/reducers/gameReducer";
+import {baseUrl} from '../../common/config/config'
 
 class Auth extends React.Component {
 
@@ -35,12 +36,18 @@ class Auth extends React.Component {
     if (this.props.token && !this.props.isRender) {
       console.log("RENDER")
       let socket;
-      socket = io('https://pern-minesweeper-multiplayer.herokuapp.com/', {
+      socket = io(baseUrl, {
         query: {
           tabId: JSON.parse(sessionStorage.getItem('tabId')),
           loggeduser: this.props.token
         }
       });
+
+      const oldEmit = socket.emit.bind(socket)
+      socket.emit = (...args) => {
+        console.log('Socket <=:', ...args);
+        return oldEmit(...args);
+      }
 
       // console.log("sockett_ID", socket.id)
       socket.on("connect", () => {

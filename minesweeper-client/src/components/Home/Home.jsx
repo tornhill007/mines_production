@@ -30,11 +30,14 @@ class Home extends React.Component {
         <div className={classes.leftItem}>
           <NavLink to={'/profile'}>Profile</NavLink>
         </div>
+        <div>
+          {this.props.userName}
+        </div>
         <div className={classes.rightItem}>
-          <div onClick={() => {
+          <button onClick={() => {
             this.props.openModal(<EditModalContainer title={'TITLE'} id={33333} text={'TESTEST'}/>)
           }}>Open modal
-          </div>
+          </button>
           <ModalContainer/>
           HOME
           <div>
@@ -42,7 +45,7 @@ class Home extends React.Component {
             <div>
               {this.props.gamesList.filter(game => !game.isfinished).map(item => {
                 return <div>
-                  <div onClick={() => {
+                  <button onClick={() => {
                     this.joinToGame(item.gameid)
                   }}>
                     <span>Name: {item.gamename} </span>
@@ -50,11 +53,11 @@ class Home extends React.Component {
                     <span>Players: {this.props.usersInRoom[item.gameid]}/{item.maxplayers} </span>
                     <span>Mines: {item.amountofmines} </span>
                     {item.isplaying ? <span>Live</span> : <span>Pending</span>}
-                  </div>
-                  <div onClick={() => {
+                  </button>
+                  <button onClick={() => {
                     this.joinToGameAsViewer(item.gameid)
                   }}>Join as Viewer
-                  </div>
+                  </button>
                 </div>
               })}
             </div>
@@ -68,7 +71,8 @@ class Home extends React.Component {
 const mapStateToProps = (state) => ({
   gamesList: state.gamePage.gamesList,
   socket: state.socketPage.socket,
-  usersInRoom: state.gamePage.usersInRoom
+  usersInRoom: state.gamePage.usersInRoom,
+  userName: state.auth.userName
 })
 
 export default withRouter(connect(mapStateToProps, {

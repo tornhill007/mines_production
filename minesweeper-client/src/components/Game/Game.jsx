@@ -105,6 +105,7 @@ class Game extends React.Component {
     })
     return (
       <div className={classes.wrapMain}>
+        <div>{this.props.userName}</div>
         <div className={classes.itemBlockLeft}>
           {/*<div onClick={() => {drawingMap(tableTwoDimensional)}}>DRAWING MAP</div>*/}
           {this.props.isGameOver && <div>GAME OVER</div>}
@@ -112,9 +113,9 @@ class Game extends React.Component {
           <table>
             {rows}
           </table>
-          {!this.props.surrendered && this.props.informationGame.isplaying && <div onClick={() => {
+          {!this.props.surrendered && this.props.informationGame.isplaying && <button onClick={() => {
             this.onSurrender()
-          }}>Surrender</div>}
+          }}>Surrender</button>}
           <div>list players:
             {/*<div>owner: {this.props.gameOwner && this.props.gameOwner.username}</div>*/}
             {
@@ -128,26 +129,26 @@ class Game extends React.Component {
           {maxPlayers[0] &&
           <div>Players: {this.props.usersInRoom[this.props.match.params.gameId]}/{maxPlayers[0].maxplayers}</div>}
           {this.props.informationGame.isplaying || this.props.surrendered ? '' : (this.props.gameOwner && this.props.gameOwner.username !== JSON.parse(localStorage.getItem('user')).userName) ? !this.props.isReady ?
-            <div onClick={() => {
+            <button onClick={() => {
               this.onReady()
-            }}>Ready</div> : <div onClick={() => {
+            }}>Ready</button> : <button onClick={() => {
               this.onNotReady()
-            }}>Not ready</div> : ''}
+            }}>Not ready</button> : ''}
           {!this.props.informationGame.isplaying && !isStarting ? (maxPlayers[0] && maxPlayers[0].owner == JSON.parse(localStorage.getItem('user')).userId) &&
-            <div onClick={() => {
+            <button onClick={() => {
               this.startGame()
-            }}>START GAME</div> : ''}
-          <div onClick={() => {
+            }}>START GAME</button> : ''}
+          <button onClick={() => {
             this.onExitFromGame()
           }}>Exit from game
-          </div>
+          </button>
         </div>
         <div className={classes.itemBlockRight}>
           {this.props.listLogs.map(item => {
-            return <div onClick={() => {
+            return <div><button onClick={() => {
               this.onShowHistory(item.history)
             }} className={classes.itemHistory}>{item.username} i: {item.history.i};
-              j: {item.history.j} value: {item.amountofmines}</div>
+              j: {item.history.j} value: {item.amountofmines}</button></div>
           })}
         </div>
       </div>
@@ -171,6 +172,7 @@ const mapStateToProps = (state) => ({
   listViewers: state.gamePage.listViewers,
   listLogs: state.gamePage.listLogs,
   isReady: state.gamePage.isReady,
+  userName: state.auth.userName
 })
 
 export default withRouter(connect(mapStateToProps, {

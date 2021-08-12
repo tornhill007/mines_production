@@ -11,7 +11,7 @@ class EditModal extends React.Component {
     this.state = {
       fieldSize: null,
       gameName: '',
-      maxPlayers: '',
+      maxPlayers: 10,
       minesAmount: '',
     }
   }
@@ -72,10 +72,10 @@ class EditModal extends React.Component {
           <input value={this.state.maxPlayers} onChange={this.onChangeMaxPlayers} placeholder={"max players (1-10)"}
                  type="text"/>
         </div>
-        <div onClick={() => {
+        <button onClick={() => {
           this.createGame()
         }}>Create game
-        </div>
+        </button>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={() => this.props.closeModal()}>Close</button>
         </div>
