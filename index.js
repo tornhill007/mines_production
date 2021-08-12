@@ -911,6 +911,7 @@ io.on("connection", async (socket) => {
       }
     })
 
+    let activeGamesList = await Games.findAll();
 
     arrTmp.forEach(item => {
       // socketsMap[item.tabid].emit('game/listViewers', {listViewers: usersTabs})
@@ -922,6 +923,7 @@ io.on("connection", async (socket) => {
 
     listUsersInGame.forEach(item => {
       socketsMap[item.tabid].emit('game/listViewers', {listViewers: usersTabs})
+      socketsMap[item.tabid].emit('game/list', activeGamesList);
       // socketsMap[item.tabid].emit('game/playerStats', {playerStats: userInfo})
       // socketsMap[item.tabid].emit('game/action', {dataTable: gamesMap[gameId.gameid], isMine})
       socketsMap[item.tabid].emit('game/listReadiness', {listReadiness: usersStateMap[gameId.gameid], gameOwner})
@@ -930,6 +932,7 @@ io.on("connection", async (socket) => {
 
     viewers.forEach(item => {
       socketsMap[item.tabid].emit('game/listViewers', {listViewers: usersTabs})
+      socketsMap[item.tabid].emit('game/list', activeGamesList);
       // socketsMap[item.tabid].emit('game/playerStats', {playerStats: userInfo})
       socketsMap[item.tabid].emit('game/action', {dataTable: gamesMap[gameId.gameid], isMine})
       socketsMap[item.tabid].emit('game/listReadiness', {listReadiness: usersStateMap[gameId.gameid], gameOwner})
@@ -938,6 +941,7 @@ io.on("connection", async (socket) => {
 
     allViewers.forEach(item => {
       socketsMap[item.tabid].emit('game/playerStats', {playerStats: userInfo})
+      socketsMap[item.tabid].emit('game/list', activeGamesList);
       // socketsMap[item.tabid].emit('game/listViewers', {listViewers: usersTabs})
       // socketsMap[item.tabid].emit('game/action', {dataTable: gamesMap[gameId.gameid], isMine})
       // socketsMap[item.tabid].emit('game/listReadiness', {listReadiness: usersStateMap[gameId.gameid], gameOwner})
