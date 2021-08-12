@@ -166,11 +166,31 @@ module.exports = async (socket) => {
         }]
       })
 
+
       socketsList.forEach(item => {
         item.emit('game/users', {usersUniq: users, gameid: gameid});
       })
     } else {
-      await game.destroy();
+
+      let listViewers = await Viewers.findAll({
+        where: {
+          gameid: gameid
+        }
+      })
+      // let listViewersInGame = listUsersInViewers.map(tab => tab.tabid)
+      // let viewers = await Users.findAll({
+      //   include: [{
+      //     model: Viewers,
+      //     required: true,
+      //     where: {
+      //       tabid: listViewersInGame
+      //     }
+      //   }]
+      // })
+      if(listViewers.length === 0) {
+        await game.destroy();
+      }
+
     }
   }
 
@@ -244,7 +264,13 @@ module.exports = async (socket) => {
     }]
   })
 
-  if (usersInGame.length === 0) {
+  let listViewers = await Viewers.findAll({
+    where: {
+      gameid: gameid
+    }
+  })
+
+  if (usersInGame.length === 0 && listViewers.length === 0) {
     await game.destroy();
     let historyDestroyed = await History.destroy({
       where: {

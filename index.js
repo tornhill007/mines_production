@@ -428,6 +428,7 @@ io.on("connection", async (socket) => {
 
     if (data.isViewer || (!data.isViewer && game.isplaying)) {
       await game.createViewer({tabid: socket.handshake.query.tabId});
+      await game.createTab({tabid: socket.handshake.query.tabId});
       socket.emit("game/surrendered", {surrendered: true});
     } else {
       await game.createTab({tabid: socket.handshake.query.tabId});
@@ -520,6 +521,8 @@ io.on("connection", async (socket) => {
         gameid: game.gameid
       }
     })
+    
+    history.sort((a, b) => Date.parse(a.createdat) - Date.parse(b.createdat))
 
     socket.emit('game/listLogs', {history})
 
@@ -601,7 +604,7 @@ io.on("connection", async (socket) => {
     let table = JSON.parse(JSON.stringify(state.history));
 
     for (let j = 0; j < actionsArr.length; j++) {
-      table = doActionForLogs(actionsArr[j].history, table, actionsArr[j].userid);
+        table = doActionForLogs(actionsArr[j].history, table, actionsArr[j].userid);
     }
 
     socket.emit('game/action', {dataTable: table});
@@ -651,7 +654,7 @@ io.on("connection", async (socket) => {
       }
     })
 
-    if (userMove.userid != socket.user.userid) {
+    if (!userMove || userMove.userid != socket.user.userid) {
       return;
     }
 
@@ -713,6 +716,14 @@ io.on("connection", async (socket) => {
       let tabsArr = tabsInGame.map(item => {
         return item.tabid
       })
+
+      if(tabsArr.length === 1) {
+        await Moves.destroy({
+          where: {
+            gameid: gameId.gameid
+          }
+        })
+      }
 
       tabsArr.forEach(item => {
         game.createViewer({tabid: item})
