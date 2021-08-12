@@ -896,7 +896,7 @@ io.on("connection", async (socket) => {
 
     socketsList.forEach(item => {
       item.emit('game/playerStats', {playerStats: userInfo})
-      socketsMap[item.tabid].emit('game/list', activeGamesList);
+      item.emit('game/list', activeGamesList);
     })
 
     let arrTmp = [];
