@@ -15,7 +15,6 @@ import {compose} from "redux";
 import {SocketContextProvider} from "./components/Context/SocketContextProvider";
 import Profile from "./components/Profile/Profile";
 
-
 class App extends React.Component {
 
   checkConnection = () => {
@@ -38,7 +37,6 @@ class App extends React.Component {
       console.log(111)
       this.checkConnection()
     }, 1000)
-
   }
 
   render() {
@@ -55,7 +53,6 @@ class App extends React.Component {
       </div>
     );
   }
-
 }
 
 const mapStateToProps = (state) => ({})
@@ -65,7 +62,7 @@ let AppContainer = compose(
 (App);
 
 const mainApp = () => {
-  console.log()
+  // console.log()
   return (
     <BrowserRouter>
         <Provider store={store}>

@@ -1,23 +1,57 @@
 const gamesMap = require('../common/gamesMap');
+const gamesMapClientInitial = require('../common/gamesMapClientInitial');
+const gamesMapClientHistory = require('../common/gamesMapClientHistory');
+// const gamesMapClient = require('../common/gamesMapClient');
 
-const doActionForLogs = ({i, j}, game, userId) => {
+const doActionForLogs = ({i, j}, game, userId, gameId) => {
   // let gameTmp = JSON.parse(JSON.stringify(game));
-  if(!i || !j) {
+  if (i == undefined || j == undefined) {
     return false;
   }
   let arr = [];
   let table = JSON.parse(JSON.stringify(game));
+  // let tableClientInitial = JSON.parse(JSON.stringify(gamesMapClientInitial[gameId]));
   if (table[i][j].isMine) {
     table[i][j].isOpen = true;
     table[i][j].isBlownUp = true;
     table[i][j].userId = userId;
+
+    gamesMapClientHistory[gameId][i][j].isOpen = true;
+    gamesMapClientHistory[gameId][i][j].isBlownUp = true;
+    gamesMapClientHistory[gameId][i][j].userId = userId;
+
+
+    for (let i = 0; i < gamesMap[gameId].length; i++) {
+      for (let j = 0; j < gamesMap[gameId][i].length; j++) {
+        if(gamesMap[gameId][i][j].isOpen) {
+          gamesMapClientHistory[gameId][i][j].amountOfMines = gamesMap[gameId][i][j].amountOfMines
+        }
+      }
+    }
+
     game = table;
+    // gamesMapClientInitial[gameId] = tableClientInitial
     return game;
   }
   if (table[i][j].amountOfMines !== 0) {
     table[i][j].isOpen = true;
-    game = table;
     table[i][j].userId = userId;
+
+    gamesMapClientHistory[gameId][i][j].isOpen = true;
+    gamesMapClientHistory[gameId][i][j].userId = userId;
+
+    // gamesMapClientInitial[gameId] = tableClientInitial;
+
+    for (let i = 0; i < gamesMap[gameId].length; i++) {
+      for (let j = 0; j < gamesMap[gameId][i].length; j++) {
+        if(gamesMap[gameId][i][j].isOpen) {
+          gamesMapClientHistory[gameId][i][j].amountOfMines = gamesMap[gameId][i][j].amountOfMines
+        }
+      }
+    }
+
+
+    game = table;
     return game;
   }
   arr.push(table[i][j])
@@ -26,8 +60,10 @@ const doActionForLogs = ({i, j}, game, userId) => {
 
     let element = arr.shift();
 
+    gamesMapClientHistory[gameId][element.i][element.j].isOpen = true;
     table[element.i][element.j].isOpen = true;
     if (!table[element.i][element.j].userId) {
+      gamesMapClientHistory[gameId][element.i][element.j].userId = userId;
       table[element.i][element.j].userId = userId;
     }
 
@@ -37,15 +73,27 @@ const doActionForLogs = ({i, j}, game, userId) => {
           if (table[element.i - 1 + i][element.j - 1 + j].amountOfMines === 0 && table[element.i - 1 + i][element.j - 1 + j].isOpen === false) {
             arr.push(table[element.i - 1 + i][element.j - 1 + j])
           }
+          gamesMapClientHistory[gameId][element.i - 1 + i][element.j - 1 + j].isOpen = true;
           table[element.i - 1 + i][element.j - 1 + j].isOpen = true;
           if (!table[element.i - 1 + i][element.j - 1 + j].userId) {
             table[element.i - 1 + i][element.j - 1 + j].userId = userId;
+            gamesMapClientHistory[gameId][element.i - 1 + i][element.j - 1 + j].userId = userId;
           }
         }
       }
     }
   }
+
+  for (let i = 0; i < gamesMap[gameId].length; i++) {
+    for (let j = 0; j < gamesMap[gameId][i].length; j++) {
+      if(gamesMap[gameId][i][j].isOpen) {
+        gamesMapClientHistory[gameId][i][j].amountOfMines = gamesMap[gameId][i][j].amountOfMines
+      }
+    }
+  }
+
   console.timeEnd('qqq')
+  // gamesMapClientInitial[gameId] = tableClientInitial;
   game = table;
   return game;
 }
