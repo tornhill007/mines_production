@@ -438,7 +438,8 @@ io.on("connection", async (socket) => {
         })
 
 
-        socket.emit('game/new', {dataTable: gamesMap[data.gameId], gameId: data.gameId})
+        // socket.emit('game/new', {dataTable: gamesMap[data.gameId], gameId: data.gameId})
+        socket.emit('game/new', {dataTable: gamesMapClient[data.gameId], gameId: data.gameId})
 
 
         socket.emit('game/users', {usersUniq: users, gameid: data.gameId});
@@ -507,7 +508,8 @@ io.on("connection", async (socket) => {
 
     }
     if (game.isplaying) {
-      socket.emit('game/new', {dataTable: gamesMap[data.gameId], gameId: data.gameId})
+      // socket.emit('game/new', {dataTable: gamesMap[data.gameId], gameId: data.gameId})
+      socket.emit('game/new', {dataTable: gamesMapClient[data.gameId], gameId: data.gameId})
     } else {
       socket.emit('game/new', {dataTable: [], gameId: data.gameId});
     }

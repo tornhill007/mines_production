@@ -1,6 +1,18 @@
 const gamesMap = require('../common/gamesMap');
 const gamesMapClient = require('../common/gamesMapClient');
 
+
+const setAmountOfMines = (firstTable, initialTable) => {
+  for (let i = 0; i < firstTable.length; i++) {
+    for (let j = 0; j < firstTable[i].length; j++) {
+      if (firstTable[i][j].isOpen) {
+        initialTable[i][j].amountOfMines = firstTable[i][j].amountOfMines
+      }
+    }
+  }
+}
+
+
 const doAction = ({i, j}, gameId, userId) => {
 
   let arr = [];
@@ -35,13 +47,15 @@ const doAction = ({i, j}, gameId, userId) => {
 
     gamesMap[gameId] = table;
 
-    for (let i = 0; i < table.length; i++) {
-      for (let j = 0; j < table[i].length; j++) {
-        if(table[i][j].isOpen) {
-          tableClient[i][j].amountOfMines = table[i][j].amountOfMines
-        }
-      }
-    }
+    // for (let i = 0; i < table.length; i++) {
+    //   for (let j = 0; j < table[i].length; j++) {
+    //     if (table[i][j].isOpen) {
+    //       tableClient[i][j].amountOfMines = table[i][j].amountOfMines
+    //     }
+    //   }
+    // }
+
+    setAmountOfMines(table, tableClient);
 
     gamesMapClient[gameId] = tableClient;
 
@@ -79,13 +93,15 @@ const doAction = ({i, j}, gameId, userId) => {
   console.timeEnd('qqq')
   gamesMap[gameId] = table;
 
-  for (let i = 0; i < table.length; i++) {
-    for (let j = 0; j < table[i].length; j++) {
-      if(table[i][j].isOpen) {
-        tableClient[i][j].amountOfMines = table[i][j].amountOfMines
-      }
-    }
-  }
+  // for (let i = 0; i < table.length; i++) {
+  //   for (let j = 0; j < table[i].length; j++) {
+  //     if (table[i][j].isOpen) {
+  //       tableClient[i][j].amountOfMines = table[i][j].amountOfMines
+  //     }
+  //   }
+  // }
+  setAmountOfMines(table, tableClient);
+
 
 
   gamesMapClient[gameId] = tableClient;

@@ -3,6 +3,17 @@ const gamesMapClientInitial = require('../common/gamesMapClientInitial');
 const gamesMapClientHistory = require('../common/gamesMapClientHistory');
 // const gamesMapClient = require('../common/gamesMapClient');
 
+const setAmountOfMinesHistory = (firstTable, initialTable) => {
+  for (let i = 0; i < firstTable.length; i++) {
+    for (let j = 0; j < firstTable[i].length; j++) {
+      if(firstTable[i][j].isOpen) {
+        initialTable[i][j].amountOfMines = firstTable[i][j].amountOfMines
+      }
+    }
+  }
+}
+
+
 const doActionForLogs = ({i, j}, game, userId, gameId) => {
   // let gameTmp = JSON.parse(JSON.stringify(game));
   if (i == undefined || j == undefined) {
@@ -21,13 +32,7 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
     gamesMapClientHistory[gameId][i][j].userId = userId;
 
 
-    for (let i = 0; i < gamesMap[gameId].length; i++) {
-      for (let j = 0; j < gamesMap[gameId][i].length; j++) {
-        if(gamesMap[gameId][i][j].isOpen) {
-          gamesMapClientHistory[gameId][i][j].amountOfMines = gamesMap[gameId][i][j].amountOfMines
-        }
-      }
-    }
+    setAmountOfMinesHistory(gamesMap[gameId], gamesMapClientHistory[gameId])
 
     game = table;
     // gamesMapClientInitial[gameId] = tableClientInitial
@@ -42,13 +47,7 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
 
     // gamesMapClientInitial[gameId] = tableClientInitial;
 
-    for (let i = 0; i < gamesMap[gameId].length; i++) {
-      for (let j = 0; j < gamesMap[gameId][i].length; j++) {
-        if(gamesMap[gameId][i][j].isOpen) {
-          gamesMapClientHistory[gameId][i][j].amountOfMines = gamesMap[gameId][i][j].amountOfMines
-        }
-      }
-    }
+    setAmountOfMinesHistory(gamesMap[gameId], gamesMapClientHistory[gameId])
 
 
     game = table;
@@ -84,13 +83,7 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
     }
   }
 
-  for (let i = 0; i < gamesMap[gameId].length; i++) {
-    for (let j = 0; j < gamesMap[gameId][i].length; j++) {
-      if(gamesMap[gameId][i][j].isOpen) {
-        gamesMapClientHistory[gameId][i][j].amountOfMines = gamesMap[gameId][i][j].amountOfMines
-      }
-    }
-  }
+  setAmountOfMinesHistory(gamesMap[gameId], gamesMapClientHistory[gameId])
 
   console.timeEnd('qqq')
   // gamesMapClientInitial[gameId] = tableClientInitial;
