@@ -5,7 +5,8 @@ import classes from './Game.module.css';
 import {createMines} from "../../utils/createMines";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBomb} from "@fortawesome/free-solid-svg-icons";
-import {checkCell, findMine, getInfoGame} from "../../redux/reducers/gameReducer";
+import {faFlag} from "@fortawesome/free-solid-svg-icons";
+import {checkCell, findMine, getInfoGame, setFlag} from "../../redux/reducers/gameReducer";
 import colorsArray from "../../common/colorsArray";
 
 
@@ -60,14 +61,40 @@ class Game extends React.Component {
   render() {
 
     console.log("this.props.usersReadiness", this.props.usersReadiness)
-    console.log("this.props.informationGame.isplaying", this.props.informationGame )
+    console.log("this.props.informationGame.isplaying", this.props.informationGame)
     let isGameOver = this.props.isGameOver;
 
     const sendAction = (i, j) => {
       // this.props.checkCell(i, j)
+      if (this.props.tableTwoDimensional[i][j].isFlag) {
+        return;
+      }
       this.props.socket.emit("game/action", {i, j}, (data) => {
       })
     }
+
+    const sendDoubleAction = (i, j) => {
+      // this.props.tableTwoDimensional[i][j]
+      let table = JSON.parse(JSON.stringify(state.tableTwoDimensional));
+      let amountMines = 0;
+      (table[i][j - 1] && table[i][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      (table[i][j + 1] && table[i][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      (table[i - 1] && table[i - 1][j].isFlag) ? amountMines += 1 : amountMines += 0;
+      (table[i + 1] && table[i + 1][j].isFlag) ? amountMines += 1 : amountMines += 0;
+      (table[i + 1] && table[i + 1][j - 1] && table[i + 1][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      (table[i + 1] && table[i + 1][j + 1] && table[i + 1][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      (table[i - 1] && table[i - 1][j + 1] && table[i - 1][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      (table[i - 1] && table[i - 1][j - 1] && table[i - 1][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
+
+      this.props.socket.emit("game/double/action", {i, j}, (data) => {
+      })
+    }
+
+    const setFlag = (e, i, j) => {
+      e.preventDefault();
+      this.props.setFlag(i, j);
+    }
+
 
     const checkCell = (i, j) => {
       this.props.checkCell(i, j)
@@ -82,11 +109,15 @@ class Game extends React.Component {
         return (
           // <td onClick={() => {checkCell(i, j); findMine(i, j)}} className={classes.itemCell} key={j}> {element.isMine ? <FontAwesomeIcon icon={faBomb} /> : (element.isOpen && element.amountOfMines === 0) ? '' : element.amountOfMines} </td>
           // <td onClick={() => {checkCell(i, j); findMine(i, j)}} className={`${element.isBlownUp && classes.blownUpBackground} ${element.isOpen && !element.isMine && element.amountOfMines === 0 && classes.emptyOpened} ${classes.itemCell}`} key={j}> {element.isMine && isGameOver ? <FontAwesomeIcon icon={faBomb} /> : (element.isOpen && !element.isMine && element.amountOfMines > 0 && element.amountOfMines) } </td>
-          <td onClick={() => {
+          <td onDoubleClick={sendDoubleAction(i, j)} onContextMenu={(e) => {
+            setFlag(e, i, j)
+          }
+          } onClick={() => {
             sendAction(i, j)
           }}
-              className={` ${element.isBlownUp && classes.blownUpBackground} ${element.isOpen && !element.isMine && element.amountOfMines !== 0 && classes[`background` + colorsArray[element.userId % 10]]} ${element.isOpen && !element.isMine && element.amountOfMines === 0 && classes[`background` + colorsArray[element.userId % 10]]} ${classes.itemCell}`}
-              key={j}> {element.isMine && element.isBlownUp ? <FontAwesomeIcon
+              className={`${element.isBlownUp && classes.blownUpBackground} ${element.isOpen && !element.isMine && element.amountOfMines !== 0 && classes[`background` + colorsArray[element.userId % 10]]} ${element.isOpen && !element.isMine && element.amountOfMines === 0 && classes[`background` + colorsArray[element.userId % 10]]} ${classes.itemCell}`}
+              key={j}> {element.isFlag ? <FontAwesomeIcon
+            icon={faFlag}/> : element.isMine && element.isBlownUp ? <FontAwesomeIcon
             icon={faBomb}/> : (element.isOpen && !element.isMine && element.amountOfMines > 0 && element.amountOfMines)} </td>
         );
       });
@@ -148,10 +179,12 @@ class Game extends React.Component {
         </div>
         <div className={classes.itemBlockRight}>
           {this.props.listLogs.map(item => {
-            return <div><button onClick={() => {
-              this.onShowHistory(item.history)
-            }} className={classes.itemHistory}>{item.username} i: {item.history.i};
-              j: {item.history.j} value: {item.amountofmines}</button></div>
+            return <div>
+              <button onClick={() => {
+                this.onShowHistory(item.history)
+              }} className={classes.itemHistory}>{item.username} i: {item.history.i};
+                j: {item.history.j} value: {item.amountofmines}</button>
+            </div>
           })}
         </div>
       </div>
@@ -179,5 +212,5 @@ const mapStateToProps = (state) => ({
 })
 
 export default withRouter(connect(mapStateToProps, {
-  checkCell, findMine, getInfoGame
+  checkCell, findMine, getInfoGame, setFlag
 })(Game));

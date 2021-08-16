@@ -19,9 +19,11 @@ const keys = require('./config/keys');
 const createGame = require('./helpers/createGame');
 const generateUID = require('./helpers/generateUID');
 const setPosition = require('./helpers/setPosition');
+const setFlag = require('./helpers/setFlag');
 const changeMove = require('./helpers/changeMove');
 const surrender = require('./helpers/surrender');
 const gamesMap = require('./common/gamesMap');
+const gamesMapByTabs = require('./common/gamesMapByTabs');
 const gamesMapClient = require('./common/gamesMapClient');
 const gamesMapClientInitial = require('./common/gamesMapClientInitial');
 const gamesMapClientHistory = require('./common/gamesMapClientHistory');
@@ -273,6 +275,10 @@ io.on("connection", async (socket) => {
       let gameId = generateUID();
       let dataTable = createGame(data.gameInfo, gameId);
       gamesMap[gameId] = dataTable;
+
+      gamesMapByTabs[gameId] = {};
+      gamesMapByTabs[gameId][socket.handshake.query.tabId] = dataTable;
+
       socket.emit('game/new', {dataTable: [], gameId});
       let newGame = Games.build({
         maxplayers: data.gameInfo.maxPlayers,
@@ -342,6 +348,7 @@ io.on("connection", async (socket) => {
   socket.on("game/join", async (data, callback) => {
 
     let dataTable = gamesMap[data.gameId];
+
     let game = await Games.findOne({
       where: {
         gameid: data.gameId
@@ -487,6 +494,7 @@ io.on("connection", async (socket) => {
     if (data.isViewer || (!data.isViewer && game.isplaying)) {
       await game.createViewer({tabid: socket.handshake.query.tabId});
       await game.createTab({tabid: socket.handshake.query.tabId});
+
       socket.emit("game/surrendered", {surrendered: true});
     } else {
       await game.createTab({tabid: socket.handshake.query.tabId});
@@ -507,6 +515,9 @@ io.on("connection", async (socket) => {
       };
 
     }
+
+    gamesMapByTabs[data.gameId][socket.handshake.query.tabId] = dataTable
+
     if (game.isplaying) {
       // socket.emit('game/new', {dataTable: gamesMap[data.gameId], gameId: data.gameId})
       socket.emit('game/new', {dataTable: gamesMapClient[data.gameId], gameId: data.gameId})
@@ -692,6 +703,23 @@ io.on("connection", async (socket) => {
 
     surrender(socket);
 
+  })
+
+  socket.on('game/setFlag', async (data, callback) => {
+
+//     let gameId = await Games.findOne({
+//       include: [{
+//         model: Tabs,
+//         required: true,
+//         where: {
+//           tabid: socket.handshake.query.tabId
+//         }
+//       }],
+//     })
+//
+//
+//     let tmp = await setFlag(socket, gameId.gameid, data);
+// console.log(tmp);
   })
 
   socket.on('game/action', async (data, callback) => {

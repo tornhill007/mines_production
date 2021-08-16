@@ -24,6 +24,7 @@ const SET_LIST_LOGS = 'SET_LIST_LOGS';
 const SET_PLAYER_STATS = 'SET_PLAYER_STATS';
 const SET_ALL_USERS_IN_ROOM = 'SET_ALL_USERS_IN_ROOM';
 const SET_IS_READY = 'SET_IS_READY';
+const SET_FLAG = 'SET_FLAG';
 
 
 let initialState = {
@@ -48,16 +49,42 @@ const gameReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_GAME:
       console.log("tableTwoDimensional", action.game)
+      if (state.tableTwoDimensional.length === 0) {
+        return {
+          ...state,
+          tableTwoDimensional: action.game,
+        };
+      } else {
+        let newTable = JSON.parse(JSON.stringify(state.tableTwoDimensional));
+        for (let i = 0; i < newTable.length; i++) {
+          for (let j = 0; j < newTable[i].length; j++) {
+            if(!action.game[i][j].isOpen && newTable[i][j].isFlag) {
+              action.game[i][j].isFlag = true
+            }
+          }
+        }
+
+        return {
+          ...state,
+          tableTwoDimensional: action.game,
+        };
+      }
+    case SET_FLAG:
+      let newTable = JSON.parse(JSON.stringify(state.tableTwoDimensional));
+      if (!state.tableTwoDimensional[action.i][action.j].isOpen) {
+        newTable[action.i][action.j].isFlag = !newTable[action.i][action.j].isFlag;
+      }
+      console.log(newTable, "newTable")
       return {
         ...state,
-        tableTwoDimensional: action.game,
+        tableTwoDimensional: newTable,
       };
     case SET_ALL_USERS_IN_ROOM:
       return {
         ...state,
         usersInRoom: action.usersInRooms,
       };
-      case SET_IS_READY:
+    case SET_IS_READY:
       return {
         ...state,
         isReady: action.data.isReady,
@@ -121,7 +148,7 @@ const gameReducer = (state = initialState, action) => {
     case SET_USERS_IN_ROOM:
       let usersInRoom = JSON.parse(JSON.stringify(state.usersInRoom));
       console.log("action.data1", action.data);
-      if(action.data.usersUniq.length == 0) {
+      if (action.data.usersUniq.length == 0) {
         return {
           ...state
         }
@@ -259,6 +286,7 @@ export const setListLogs = (listLogs) => ({type: SET_LIST_LOGS, listLogs});
 export const setPlayerStats = (playerStats) => ({type: SET_PLAYER_STATS, playerStats});
 export const setListUsersInRoom = (usersInRooms) => ({type: SET_ALL_USERS_IN_ROOM, usersInRooms});
 export const setIsReady = (data) => ({type: SET_IS_READY, data});
+export const setFlag = (i, j) => ({type: SET_FLAG, i, j});
 
 export const setGamesList = (gamesList) => ({type: SET_GAMES_LIST, gamesList});
 
