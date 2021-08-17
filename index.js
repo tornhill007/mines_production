@@ -287,7 +287,6 @@ io.on("connection", async (socket) => {
       }
     })
 
-
     if (!game.isplaying) {
       return;
     }
@@ -310,9 +309,6 @@ io.on("connection", async (socket) => {
       return;
     }
 
-    // if (gamesMap[gameId.gameid][data.i][data.j].isOpen) {
-    //   return;
-    // }
 
     let userMove = await Moves.findOne({
       where: {
@@ -338,7 +334,6 @@ io.on("connection", async (socket) => {
     let isMine = false;
     let table = gamesMap[gameId.gameid];
     let tableClient = gamesMapClient[gameId.gameid];
-    // data.minesCoordinate.forEach(item => {
     let amountMinesUnderFlags = 0;
     outer: for (let k = 0; k < data.minesCoordinate.length; k++) {
 
@@ -361,11 +356,6 @@ io.on("connection", async (socket) => {
                 await gameAction(socket, isMine);
                 break outer;
               }
-              // if (table[item[0] - 1 + i][item[1] - 1 + j].amountOfMines === 0 && table[item[0] - 1 + i][item[1] - 1 + j].isOpen === false) {
-              //   arr.push(table[item[0].i - 1 + i][item[0].j - 1 + j])
-              // }
-              // table[data.i - 1 + i][data.j - 1 + j].isOpen = true;
-
             }
           }
         }
@@ -381,22 +371,16 @@ io.on("connection", async (socket) => {
           if (table[data.i - 1 + i] && table[data.i - 1 + i][data.j - 1 + j]) {
             if (table[data.i - 1 + i][data.j - 1 + j].isOpen === false && !table[data.i - 1 + i][data.j - 1 + j].isMine) {
               await doAction({i: data.i - 1 + i, j: data.j - 1 + j}, gameId.gameid, socket.user.userid)
-
             }
-
           }
         }
       }
-
       await gameAction(socket, isMine);
-
     }
-
 
     console.log(1);
 
   })
-
 
   socket.on('game/create', async (data, callback) => {
       if (!data) {
@@ -455,7 +439,6 @@ io.on("connection", async (socket) => {
         }
       };
 
-
       socket.emit('game/info', {game: newGame})
 
       socketsList.forEach(item => {
@@ -467,7 +450,6 @@ io.on("connection", async (socket) => {
       listUsersInGame.forEach(item => {
         socketsMap[item.tabid].emit('game/listReadiness', {listReadiness: usersStateMap[gameId], gameOwner})
       })
-
     }
   )
 
@@ -484,7 +466,6 @@ io.on("connection", async (socket) => {
         gameid: data.gameId
       }
     })
-
 
     let gameOwner = await Users.findOne({
       where: {
@@ -557,10 +538,8 @@ io.on("connection", async (socket) => {
         }
       }
 
-
       if (game.isplaying) {
         game.createTab({tabid: socket.handshake.query.tabId});
-
 
         let listTabsInGame = listUsersInGame.map(tab => tab.tabid)
 
@@ -574,10 +553,8 @@ io.on("connection", async (socket) => {
           }]
         })
 
-
         // socket.emit('game/new', {dataTable: gamesMap[data.gameId], gameId: data.gameId})
         socket.emit('game/new', {dataTable: gamesMapClient[data.gameId], gameId: data.gameId})
-
 
         socket.emit('game/users', {usersUniq: users, gameid: data.gameId});
         if (usersStateMap[data.gameId]) {
@@ -617,9 +594,7 @@ io.on("connection", async (socket) => {
         socket.emit('game/info', {game})
         return;
       }
-
     }
-
 
     if (data.isViewer || (!data.isViewer && game.isplaying)) {
       await game.createViewer({tabid: socket.handshake.query.tabId});
@@ -654,7 +629,6 @@ io.on("connection", async (socket) => {
     } else {
       socket.emit('game/new', {dataTable: [], gameId: data.gameId});
     }
-
 
     let socketsList = Object.values(socketsMap);
     let listUsersInGame = await Tabs.findAll({
@@ -698,7 +672,6 @@ io.on("connection", async (socket) => {
       }]
     })
 
-
     socketsList.forEach(item => {
       let users = Object.values(usersStateMap[data.gameId]);
       users.push(data.gameId)
@@ -724,12 +697,6 @@ io.on("connection", async (socket) => {
         }
       }]
     })
-
-    // let usersViewers = await Users.findAll({
-    //     where: {
-    //       userid: [usersid]
-    //     }
-    // })
 
     let history = await History.findAll({
       where: {
