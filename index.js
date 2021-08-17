@@ -370,7 +370,7 @@ io.on("connection", async (socket) => {
         for (let j = 0; j < 3; j++) {
           if (table[data.i - 1 + i] && table[data.i - 1 + i][data.j - 1 + j]) {
             if (table[data.i - 1 + i][data.j - 1 + j].isOpen === false && !table[data.i - 1 + i][data.j - 1 + j].isMine) {
-              await doAction({i: data.i - 1 + i, j: data.j - 1 + j}, gameId.gameid, socket.user.userid)
+              doAction({i: data.i - 1 + i, j: data.j - 1 + j}, gameId.gameid, socket.user.userid)
             }
           }
         }
