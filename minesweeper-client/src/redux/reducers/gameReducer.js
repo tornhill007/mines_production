@@ -50,7 +50,7 @@ const gameReducer = (state = initialState, action) => {
     case SET_GAME:
       console.log("tableTwoDimensional", action.game)
       console.log("state.tableTwoDimensional", state.tableTwoDimensional)
-      if (state.tableTwoDimensional.length === 0) {
+      if (state.tableTwoDimensional.length === 0 || action.game.length === 0) {
         return {
           ...state,
           tableTwoDimensional: action.game,
