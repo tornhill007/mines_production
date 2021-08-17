@@ -49,6 +49,7 @@ const gameReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_GAME:
       console.log("tableTwoDimensional", action.game)
+      console.log("state.tableTwoDimensional", state.tableTwoDimensional)
       if (state.tableTwoDimensional.length === 0) {
         return {
           ...state,

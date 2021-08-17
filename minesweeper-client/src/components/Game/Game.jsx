@@ -12,6 +12,27 @@ import colorsArray from "../../common/colorsArray";
 
 class Game extends React.Component {
 
+
+  componentDidMount = props => {
+    this.clickTimeout = null
+  }
+
+  handleClicks = () => {
+    if (this.clickTimeout !== null) {
+      console.log('double click executes')
+      clearTimeout(this.clickTimeout)
+      this.clickTimeout = null
+    } else {
+      console.log('single click')
+      this.clickTimeout = setTimeout(() => {
+        console.log('first click executes ')
+        clearTimeout(this.clickTimeout)
+        this.clickTimeout = null
+      }, 2000)
+    }
+  }
+
+
   constructor(props) {
     super(props);
 
@@ -66,27 +87,88 @@ class Game extends React.Component {
 
     const sendAction = (i, j) => {
       // this.props.checkCell(i, j)
+
+    }
+
+    const func = (minesCoordinate, i, j) => {
+      // minesCoordinate = [...minesCoordinate, [i, j]];
+    console.log(3)
+    }
+
+    const sendDoubleAction = (e, i, j) => {
+      // e.stopImmediatePropagation();
+      // this.props.tableTwoDimensional[i][j]
+      let table = JSON.parse(JSON.stringify(this.props.tableTwoDimensional));
+      let amountMines = 0;
+      let minesCoordinate = [];
+      if(table[i][j - 1] && table[i][j - 1].isFlag) {
+        amountMines += 1;
+        minesCoordinate = [...minesCoordinate, [i, j - 1]];
+      }
+      if(table[i][j + 1] && table[i][j + 1].isFlag) {
+        amountMines += 1;
+        minesCoordinate = [...minesCoordinate, [i, j + 1]];
+      }
+      if(table[i - 1] && table[i - 1][j].isFlag) {
+        amountMines += 1
+        minesCoordinate = [...minesCoordinate, [i - 1, j]];
+      }
+      if(table[i + 1] && table[i + 1][j].isFlag) {
+        amountMines += 1
+        minesCoordinate = [...minesCoordinate, [i + 1, j]];
+      }
+      if(table[i + 1] && table[i + 1][j - 1] && table[i + 1][j - 1].isFlag) {
+        amountMines += 1
+        minesCoordinate = [...minesCoordinate, [i + 1, j - 1]];
+      }
+      if(table[i + 1] && table[i + 1][j + 1] && table[i + 1][j + 1].isFlag) {
+        amountMines += 1
+        minesCoordinate = [...minesCoordinate, [i + 1, j + 1]];
+      }
+      if(table[i - 1] && table[i - 1][j + 1] && table[i - 1][j + 1].isFlag) {
+        amountMines += 1
+        minesCoordinate = [...minesCoordinate, [i - 1, j + 1]];
+      }
+      if(table[i - 1] && table[i - 1][j - 1] && table[i - 1][j - 1].isFlag) {
+        amountMines += 1
+        minesCoordinate = [...minesCoordinate, [i - 1, j - 1]];
+      }
+
+      // (table[i][j - 1] && table[i][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      // (table[i][j + 1] && table[i][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      // (table[i - 1] && table[i - 1][j].isFlag) ? amountMines += 1 : amountMines += 0;
+      // (table[i + 1] && table[i + 1][j].isFlag) ? amountMines += 1 : amountMines += 0;
+      // (table[i + 1] && table[i + 1][j - 1] && table[i + 1][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      // (table[i + 1] && table[i + 1][j + 1] && table[i + 1][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      // (table[i - 1] && table[i - 1][j + 1] && table[i - 1][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
+      // (table[i - 1] && table[i - 1][j - 1] && table[i - 1][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
+
+      console.log("minesCoordinate", minesCoordinate)
+
+      if (amountMines != table[i][j].amountOfMines) {
+        return
+      }
+
+      this.props.socket.emit("game/double/action", {minesCoordinate, i, j}, (data) => {
+
+      })
+    }
+
+
+    const clickHandler = (event, i, j) => {
+
+      event.stopPropagation();
+
+      if (event.ctrlKey) {
+        console.log("Ctrl+click has just happened!");
+        sendDoubleAction(event, i, j)
+        return;
+      }
+
       if (this.props.tableTwoDimensional[i][j].isFlag) {
         return;
       }
       this.props.socket.emit("game/action", {i, j}, (data) => {
-      })
-    }
-
-    const sendDoubleAction = (i, j) => {
-      // this.props.tableTwoDimensional[i][j]
-      let table = JSON.parse(JSON.stringify(state.tableTwoDimensional));
-      let amountMines = 0;
-      (table[i][j - 1] && table[i][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
-      (table[i][j + 1] && table[i][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
-      (table[i - 1] && table[i - 1][j].isFlag) ? amountMines += 1 : amountMines += 0;
-      (table[i + 1] && table[i + 1][j].isFlag) ? amountMines += 1 : amountMines += 0;
-      (table[i + 1] && table[i + 1][j - 1] && table[i + 1][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
-      (table[i + 1] && table[i + 1][j + 1] && table[i + 1][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
-      (table[i - 1] && table[i - 1][j + 1] && table[i - 1][j + 1].isFlag) ? amountMines += 1 : amountMines += 0;
-      (table[i - 1] && table[i - 1][j - 1] && table[i - 1][j - 1].isFlag) ? amountMines += 1 : amountMines += 0;
-
-      this.props.socket.emit("game/double/action", {i, j}, (data) => {
       })
     }
 
@@ -109,11 +191,11 @@ class Game extends React.Component {
         return (
           // <td onClick={() => {checkCell(i, j); findMine(i, j)}} className={classes.itemCell} key={j}> {element.isMine ? <FontAwesomeIcon icon={faBomb} /> : (element.isOpen && element.amountOfMines === 0) ? '' : element.amountOfMines} </td>
           // <td onClick={() => {checkCell(i, j); findMine(i, j)}} className={`${element.isBlownUp && classes.blownUpBackground} ${element.isOpen && !element.isMine && element.amountOfMines === 0 && classes.emptyOpened} ${classes.itemCell}`} key={j}> {element.isMine && isGameOver ? <FontAwesomeIcon icon={faBomb} /> : (element.isOpen && !element.isMine && element.amountOfMines > 0 && element.amountOfMines) } </td>
-          <td onDoubleClick={sendDoubleAction(i, j)} onContextMenu={(e) => {
+          <td onContextMenu={(e) => {
             setFlag(e, i, j)
           }
-          } onClick={() => {
-            sendAction(i, j)
+          } onClick={(e) => {
+            clickHandler(e, i, j)
           }}
               className={`${element.isBlownUp && classes.blownUpBackground} ${element.isOpen && !element.isMine && element.amountOfMines !== 0 && classes[`background` + colorsArray[element.userId % 10]]} ${element.isOpen && !element.isMine && element.amountOfMines === 0 && classes[`background` + colorsArray[element.userId % 10]]} ${classes.itemCell}`}
               key={j}> {element.isFlag ? <FontAwesomeIcon
