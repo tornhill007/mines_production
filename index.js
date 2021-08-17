@@ -347,7 +347,7 @@ io.on("connection", async (socket) => {
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             if (table[data.i - 1 + i] && table[data.i - 1 + i][data.j - 1 + j]) {
-              if (table[data.i - 1 + i][data.j - 1 + j].isOpen === false && table[data.i - 1 + i][data.j - 1 + j].isMine) {
+              if (table[data.i - 1 + i][data.j - 1 + j].isOpen === false && table[data.i - 1 + i][data.j - 1 + j].isMine && data.i - 1 + i !== data.i && data.j - 1 + j !== data.j) {
                 table[data.i - 1 + i][data.j - 1 + j].isOpen = true;
                 table[data.i - 1 + i][data.j - 1 + j].isBlownUp = true;
                 tableClient[data.i - 1 + i][data.j - 1 + j].isOpen = true;
