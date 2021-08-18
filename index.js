@@ -294,21 +294,39 @@ io.on("connection", async (socket) => {
     let tableTmp = gamesMap[gameId.gameid];
 
     let amountOfCloseCells = 0;
+    let arrayOfCloseCells = [];
 
     for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
+      outer: for (let j = 0; j < 3; j++) {
         if (tableTmp[data.i - 1 + i] && tableTmp[data.i - 1 + i][data.j - 1 + j]) {
           if (!tableTmp[data.i - 1 + i][data.j - 1 + j].isOpen) {
-            amountOfCloseCells++
+            amountOfCloseCells++;
+            let counter = 0;
+            for (let m = 0; m < data.minesCoordinate.length; m++) {
+              // console.log("data.minesCoordinate[m][0]", data.minesCoordinate[m][0])
+              // console.log("data.i - 1 + i", data.i - 1 + i)
+              // console.log("data.minesCoordinate[m][1]", data.minesCoordinate[m][1])
+              // console.log("data.j - 1 + j", data.j - 1 + j)
+
+              if ((data.minesCoordinate[m][0] !== (data.i - 1 + i)) || (data.minesCoordinate[m][1] !== (data.j - 1 + j))) {
+                counter++;
+              }
+            }
+            if (counter === data.minesCoordinate.length) {
+              arrayOfCloseCells.push({i: data.i - 1 + i, j: data.j - 1 + j})
+            }
           }
+          // if(!tableTmp[data.i - 1 + i][data.j - 1 + j].isOpen) {
+          //   console.log(data.minesCoordinate)
+          //   arrayOfCloseCells.push({i: data.i - 1 + i, j: data.j - 1 + j})
+          // }
         }
       }
     }
 
-    if(amountOfCloseCells === data.minesCoordinate.length) {
+    if (amountOfCloseCells === data.minesCoordinate.length) {
       return;
     }
-
 
     let userMove = await Moves.findOne({
       where: {
@@ -320,16 +338,8 @@ io.on("connection", async (socket) => {
       return;
     }
 
-    let newAction = History.build({
-      gameid: gameId.gameid,
-      type: 'action',
-      history: data,
-      username: user.username,
-      userid: user.userid,
-      amountofmines: +gamesMap[gameId.gameid][data.i][data.j].amountOfMines
-    })
 
-    await newAction.save();
+
 
     let isMine = false;
     let table = gamesMap[gameId.gameid];
@@ -376,6 +386,15 @@ io.on("connection", async (socket) => {
         }
       }
       await gameAction(socket, isMine);
+      let newAction = History.build({
+        gameid: gameId.gameid,
+        type: 'action',
+        history: arrayOfCloseCells,
+        username: user.username,
+        userid: user.userid,
+        amountofmines: +gamesMap[gameId.gameid][data.i][data.j].amountOfMines
+      })
+      await newAction.save();
     }
 
     console.log(1);
@@ -747,29 +766,54 @@ io.on("connection", async (socket) => {
       return;
     }
 
+    let action = data.action;
+    let actionId = data.actionId;
+    // if (Array.isArray(data.action)) {
+    //   action = data.action[0];
+    // }
+
     let actionTime = await History.findOne({
       where: {
         gameid: gameId.gameid,
-        history: data.action
+
+        // history: JSON.stringify(action)
       }
     })
 
     let history = await History.findAll({
       where: {
         gameid: gameId.gameid,
+        id: {
+          [Op.lte]: actionId
+        }
         // createdat: {
         //   [Op.lte]: actionTime.createdat
         // }
       }
     })
 
-    history.sort((a, b) => Date.parse(a.createdat) - Date.parse(b.createdat))
+    let allGameHistory = await History.findAll({
+      where: {
+        gameid: gameId.gameid,
 
-    if (history[history.length - 1].history.i === data.action.i && history[history.length - 1].history.j === data.action.j) {
+      }
+    })
+
+    history.sort((a, b) => Date.parse(a.createdat) - Date.parse(b.createdat))
+    allGameHistory.sort((a, b) => Date.parse(a.createdat) - Date.parse(b.createdat))
+
+    if (!Array.isArray(allGameHistory[allGameHistory.length - 1].history) && allGameHistory[allGameHistory.length - 1].history.i === data.action.i && allGameHistory[allGameHistory.length - 1].history.j === data.action.j) {
       viewer.islive = true;
       socket.emit('game/action', {dataTable: gamesMapClient[gameId.gameid]});
       await viewer.save();
       return;
+    } else if (Array.isArray(allGameHistory[allGameHistory.length - 1].history)) {
+      if (allGameHistory[allGameHistory.length - 1].history[0].i === data.action.i && allGameHistory[allGameHistory.length - 1].history[0].j === data.action.j) {
+        viewer.islive = true;
+        socket.emit('game/action', {dataTable: gamesMapClient[gameId.gameid]});
+        await viewer.save();
+        return;
+      }
     }
 
     viewer.islive = false;
@@ -777,19 +821,25 @@ io.on("connection", async (socket) => {
     await viewer.save();
 
 
-    let filteredHistory = history.filter(item => {
-      return Date.parse(item.createdat) <= Date.parse(actionTime.createdat)
-    })
-    filteredHistory.sort((a, b) => Date.parse(a.createdat) - Date.parse(b.createdat))
+    // let filteredHistory = history.filter(item => {
+    //   return Date.parse(item.createdat) <= Date.parse(actionTime.createdat)
+    // })
+    history.sort((a, b) => Date.parse(a.createdat) - Date.parse(b.createdat))
 
-    let state = filteredHistory[0]
-    let actionsArr = filteredHistory.slice(1)
+    let state = history[0]
+    let actionsArr = history.slice(1)
     let table = JSON.parse(JSON.stringify(state.history));
     // let table = JSON.parse(JSON.stringify(gamesMapClient[gameId.gameid]));
     let gamesMapClientHistoryTmp = JSON.parse(JSON.stringify(gamesMapClientInitial[gameId.gameid]));
     gamesMapClientHistory[gameId.gameid] = gamesMapClientHistoryTmp;
     for (let j = 0; j < actionsArr.length; j++) {
-      table = doActionForLogs(actionsArr[j].history, table, actionsArr[j].userid, gameId.gameid);
+      if (Array.isArray(actionsArr[j].history)) {
+        for (let k = 0; k < actionsArr[j].history.length; k++) {
+          doActionForLogs(actionsArr[j].history[k], table, actionsArr[j].userid, gameId.gameid);
+        }
+      } else {
+        table = doActionForLogs(actionsArr[j].history, table, actionsArr[j].userid, gameId.gameid);
+      }
     }
 
     socket.emit('game/action', {dataTable: gamesMapClientHistory[gameId.gameid]});
@@ -1043,7 +1093,7 @@ io.on("connection", async (socket) => {
     }
 
     if (counterOpenedCells === counterCells - +game.amountofmines) {
-      console.log(usersStateMap[gameId.gameid]);
+      // console.log(usersStateMap[gameId.gameid]);
 
       let listUsersInGame = await Tabs.findAll({
         where: {
@@ -1110,10 +1160,8 @@ io.on("connection", async (socket) => {
       // await win.save();
       game.isfinished = true;
       game.isplaying = false;
-
     }
     // socketsMap[gameId.gameid]
-
 
     let arr = Object.keys(usersStateMap[gameId.gameid]);
     if (arr.length <= +game.moveposition + 1) {
@@ -1123,7 +1171,6 @@ io.on("connection", async (socket) => {
     }
 
     await game.save();
-
 
     if (arr.length > 1) {
       await changeMove(gameId.gameid, socket.user.userid);
@@ -1200,7 +1247,6 @@ io.on("connection", async (socket) => {
         arrTmp.push(item);
       }
     })
-
 
     arrTmp.forEach(item => {
       socketsMap[item.tabid].emit('game/action', {dataTable: gamesMapClient[gameId.gameid], isMine})

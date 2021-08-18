@@ -72,7 +72,6 @@ const gameAction = async (socket, isMine) => {
     })
 
 
-
     if (tabsArr.length === 1) {
       await Moves.destroy({
         where: {
@@ -196,76 +195,8 @@ const gameAction = async (socket, isMine) => {
     }
   }
 
-  if (counterOpenedCells === counterCells - +game.amountofmines) {
-    console.log(usersStateMap[gameId.gameid]);
 
-    let listUsersInGame = await Tabs.findAll({
-      where: {
-        gameid: gameId.gameid
-      }
-    })
-
-    let listTabsInGame = listUsersInGame.map(tab => tab.tabid)
-
-
-    let viewersAll = await Viewers.findAll({
-      where: {
-        gameid: gameId.gameid
-      }
-    });
-
-    let viewersTabs = viewersAll.map(item => item.tabid);
-
-    let newFilterList = listTabsInGame.filter(item => {
-      if (!viewersTabs.includes(item)) {
-        return true;
-      }
-    })
-
-    let usersUniq = await Users.findAll({
-      include: [{
-        model: Tabs,
-        required: true,
-        where: {
-          tabid: newFilterList
-        }
-      }]
-    })
-
-    newFilterList.forEach(item => {
-      game.createViewer({
-        tabid: item
-      })
-      socketsMap[item].emit("game/win", {win: true})
-
-      if (usersStateMap[gameId.gameid][item]) {
-        delete usersStateMap[gameId.gameid][item]
-      }
-      socketsMap[item].emit("game/surrendered", {surrendered: true});
-    })
-
-    for (let i = 0; i < usersUniq.length; i++) {
-      let win = await UserInfo.findOne({
-        where: {
-          userid: usersUniq[i].userid
-        }
-      })
-      if (win) {
-        win.winamount = +win.winamount + 1;
-      } else {
-        win = UserInfo.build({
-          userid: usersUniq[i].userid,
-          winamount: 1,
-          lossamount: 0
-        })
-      }
-      await win.save();
-    }
-    // await win.save();
-    game.isfinished = true;
-    game.isplaying = false;
-
-  }
+  console.log(gamesMap[gameId.gameid])
 // socketsMap[gameId.gameid]
 
 
@@ -357,6 +288,79 @@ const gameAction = async (socket, isMine) => {
   })
 
 
+  if (counterOpenedCells === counterCells - +game.amountofmines) {
+    console.log(usersStateMap[gameId.gameid]);
+
+    let listUsersInGame = await Tabs.findAll({
+      where: {
+        gameid: gameId.gameid
+      }
+    })
+
+    let listTabsInGame = listUsersInGame.map(tab => tab.tabid)
+
+
+    let viewersAll = await Viewers.findAll({
+      where: {
+        gameid: gameId.gameid
+      }
+    });
+
+    let viewersTabs = viewersAll.map(item => item.tabid);
+
+    let newFilterList = listTabsInGame.filter(item => {
+      if (!viewersTabs.includes(item)) {
+        return true;
+      }
+    })
+
+    let usersUniq = await Users.findAll({
+      include: [{
+        model: Tabs,
+        required: true,
+        where: {
+          tabid: newFilterList
+        }
+      }]
+    })
+
+    newFilterList.forEach(item => {
+      game.createViewer({
+        tabid: item
+      })
+      socketsMap[item].emit("game/win", {win: true})
+
+      if (usersStateMap[gameId.gameid][item]) {
+        delete usersStateMap[gameId.gameid][item]
+      }
+      socketsMap[item].emit("game/surrendered", {surrendered: true});
+    })
+
+    for (let i = 0; i < usersUniq.length; i++) {
+      let win = await UserInfo.findOne({
+        where: {
+          userid: usersUniq[i].userid
+        }
+      })
+      if (win) {
+        win.winamount = +win.winamount + 1;
+      } else {
+        win = UserInfo.build({
+          userid: usersUniq[i].userid,
+          winamount: 1,
+          lossamount: 0
+        })
+      }
+      await win.save();
+    }
+    // await win.save();
+    game.isfinished = true;
+    game.isplaying = false;
+
+
+  }
+
+
   arrTmp.forEach(item => {
     socketsMap[item.tabid].emit('game/action', {dataTable: gamesMapClient[gameId.gameid], isMine})
   })
@@ -378,6 +382,8 @@ const gameAction = async (socket, isMine) => {
     socketsMap[item.tabid].emit('game/playerStats', {playerStats: userInfoTmp})
     socketsMap[item.tabid].emit('game/listLogs', {history})
   })
+
+  console.log(gamesMap[gameId.gameid])
 }
 
 module.exports = gameAction;

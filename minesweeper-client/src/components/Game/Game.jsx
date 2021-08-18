@@ -69,8 +69,8 @@ class Game extends React.Component {
     // this.props.getInfoGame(this.props.match.params.gameId);
   }
 
-  onShowHistory = (action) => {
-    this.props.socket.emit("game/showHistory", {action})
+  onShowHistory = (actionId, action) => {
+    this.props.socket.emit("game/showHistory", {actionId, action})
     // this.props.getInfoGame(this.props.match.params.gameId);
   }
 
@@ -260,10 +260,10 @@ class Game extends React.Component {
           </button>
         </div>
         <div className={classes.itemBlockRight}>
-          {this.props.listLogs.map(item => {
+          {this.props.listLogs.map((item,index) => {
             return <div>
               <button onClick={() => {
-                this.onShowHistory(item.history)
+                this.onShowHistory(item.id, item.history)
               }} className={classes.itemHistory}>{item.username} i: {item.history.i};
                 j: {item.history.j} value: {item.amountofmines}</button>
             </div>

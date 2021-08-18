@@ -129,6 +129,7 @@ class Auth extends React.Component {
       })
 
       socket.on("game/listLogs", (data) => {
+console.log("data.history", data.history)
         this.props.setListLogs(data.history);
       })
 

@@ -29,6 +29,7 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
 
     gamesMapClientHistory[gameId][i][j].isOpen = true;
     gamesMapClientHistory[gameId][i][j].isBlownUp = true;
+    gamesMapClientHistory[gameId][i][j].isMine = true;
     gamesMapClientHistory[gameId][i][j].userId = userId;
 
 
