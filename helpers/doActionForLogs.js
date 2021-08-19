@@ -32,7 +32,6 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
     gamesMapClientHistory[gameId][i][j].isMine = true;
     gamesMapClientHistory[gameId][i][j].userId = userId;
 
-
     setAmountOfMinesHistory(gamesMap[gameId], gamesMapClientHistory[gameId])
 
     game = table;
@@ -40,16 +39,16 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
     return game;
   }
   if (table[i][j].amountOfMines !== 0) {
+    if(!table[i][j].isOpen) {
+      table[i][j].userId = userId;
+      gamesMapClientHistory[gameId][i][j].userId = userId;
+    }
     table[i][j].isOpen = true;
-    table[i][j].userId = userId;
-
     gamesMapClientHistory[gameId][i][j].isOpen = true;
-    gamesMapClientHistory[gameId][i][j].userId = userId;
 
     // gamesMapClientInitial[gameId] = tableClientInitial;
 
     setAmountOfMinesHistory(gamesMap[gameId], gamesMapClientHistory[gameId])
-
 
     game = table;
     return game;

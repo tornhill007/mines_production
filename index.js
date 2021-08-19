@@ -339,8 +339,6 @@ io.on("connection", async (socket) => {
     }
 
 
-
-
     let isMine = false;
     let table = gamesMap[gameId.gameid];
     let tableClient = gamesMapClient[gameId.gameid];
@@ -352,19 +350,41 @@ io.on("connection", async (socket) => {
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             if (table[data.i - 1 + i] && table[data.i - 1 + i][data.j - 1 + j]) {
-              if (table[data.i - 1 + i][data.j - 1 + j].isOpen === false && table[data.i - 1 + i][data.j - 1 + j].isMine && data.i - 1 + i !== data.i && data.j - 1 + j !== data.j) {
-                table[data.i - 1 + i][data.j - 1 + j].isOpen = true;
-                table[data.i - 1 + i][data.j - 1 + j].isBlownUp = true;
-                tableClient[data.i - 1 + i][data.j - 1 + j].isOpen = true;
-                tableClient[data.i - 1 + i][data.j - 1 + j].isMine = true;
-                tableClient[data.i - 1 + i][data.j - 1 + j].isBlownUp = true;
+              if ((!table[data.i - 1 + i][data.j - 1 + j].isOpen) && (table[data.i - 1 + i][data.j - 1 + j].isMine === true) && (data.i - 1 + i !== data.i || data.j - 1 + j !== data.j)) {
+                // console.log("1qq", table[data.i - 1 + i][data.j - 1 + j].isMine)
+                // console.log("iqq", data.i-1+i)
+                // console.log("jqq", data.j - 1 + j)
+                let counterIsClicksFlags = 0;
+                for (let m = 0; m < data.minesCoordinate.length; m++) {
+                  if ((data.i - 1 + i !== data.minesCoordinate[m][0]) || (data.j - 1 + j !== data.minesCoordinate[m][1])) {
+                    counterIsClicksFlags++;
+                  }
+                  if (counterIsClicksFlags === data.minesCoordinate.length) {
+                    table[data.i - 1 + i][data.j - 1 + j].isOpen = true;
+                    table[data.i - 1 + i][data.j - 1 + j].isBlownUp = true;
+                    tableClient[data.i - 1 + i][data.j - 1 + j].isOpen = true;
+                    tableClient[data.i - 1 + i][data.j - 1 + j].isMine = true;
+                    tableClient[data.i - 1 + i][data.j - 1 + j].isBlownUp = true;
 
-                table[data.i - 1 + i][data.j - 1 + j].userId = socket.user.userid;
-                tableClient[data.i - 1 + i][data.j - 1 + j].userId = socket.user.userid;
+                    table[data.i - 1 + i][data.j - 1 + j].userId = socket.user.userid;
+                    tableClient[data.i - 1 + i][data.j - 1 + j].userId = socket.user.userid;
 
-                isMine = true;
-                await gameAction(socket, isMine);
-                break outer;
+                    isMine = true;
+                    let newAction = History.build({
+                      gameid: gameId.gameid,
+                      type: 'action',
+                      history: {i: data.i - 1 + i, j: data.j - 1 + j},
+                      username: user.username,
+                      userid: user.userid,
+                      amountofmines: +gamesMap[gameId.gameid][data.i][data.j].amountOfMines
+                    })
+                    await newAction.save();
+                    await gameAction(socket, isMine);
+                    break outer;
+                  }
+                }
+
+
               }
             }
           }

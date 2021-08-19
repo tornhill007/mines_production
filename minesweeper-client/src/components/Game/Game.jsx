@@ -92,7 +92,7 @@ class Game extends React.Component {
 
     const func = (minesCoordinate, i, j) => {
       // minesCoordinate = [...minesCoordinate, [i, j]];
-    console.log(3)
+      console.log(3)
     }
 
     const sendDoubleAction = (e, i, j) => {
@@ -101,35 +101,35 @@ class Game extends React.Component {
       let table = JSON.parse(JSON.stringify(this.props.tableTwoDimensional));
       let amountMines = 0;
       let minesCoordinate = [];
-      if(table[i][j - 1] && table[i][j - 1].isFlag) {
+      if (table[i][j - 1] && table[i][j - 1].isFlag) {
         amountMines += 1;
         minesCoordinate = [...minesCoordinate, [i, j - 1]];
       }
-      if(table[i][j + 1] && table[i][j + 1].isFlag) {
+      if (table[i][j + 1] && table[i][j + 1].isFlag) {
         amountMines += 1;
         minesCoordinate = [...minesCoordinate, [i, j + 1]];
       }
-      if(table[i - 1] && table[i - 1][j].isFlag) {
+      if (table[i - 1] && table[i - 1][j].isFlag) {
         amountMines += 1
         minesCoordinate = [...minesCoordinate, [i - 1, j]];
       }
-      if(table[i + 1] && table[i + 1][j].isFlag) {
+      if (table[i + 1] && table[i + 1][j].isFlag) {
         amountMines += 1
         minesCoordinate = [...minesCoordinate, [i + 1, j]];
       }
-      if(table[i + 1] && table[i + 1][j - 1] && table[i + 1][j - 1].isFlag) {
+      if (table[i + 1] && table[i + 1][j - 1] && table[i + 1][j - 1].isFlag) {
         amountMines += 1
         minesCoordinate = [...minesCoordinate, [i + 1, j - 1]];
       }
-      if(table[i + 1] && table[i + 1][j + 1] && table[i + 1][j + 1].isFlag) {
+      if (table[i + 1] && table[i + 1][j + 1] && table[i + 1][j + 1].isFlag) {
         amountMines += 1
         minesCoordinate = [...minesCoordinate, [i + 1, j + 1]];
       }
-      if(table[i - 1] && table[i - 1][j + 1] && table[i - 1][j + 1].isFlag) {
+      if (table[i - 1] && table[i - 1][j + 1] && table[i - 1][j + 1].isFlag) {
         amountMines += 1
         minesCoordinate = [...minesCoordinate, [i - 1, j + 1]];
       }
-      if(table[i - 1] && table[i - 1][j - 1] && table[i - 1][j - 1].isFlag) {
+      if (table[i - 1] && table[i - 1][j - 1] && table[i - 1][j - 1].isFlag) {
         amountMines += 1
         minesCoordinate = [...minesCoordinate, [i - 1, j - 1]];
       }
@@ -148,6 +148,9 @@ class Game extends React.Component {
       if (amountMines != table[i][j].amountOfMines) {
         return
       }
+      // if(!table[i][j].isOpen) {
+      //   return;
+      // }
 
       this.props.socket.emit("game/double/action", {minesCoordinate, i, j}, (data) => {
 
@@ -260,7 +263,7 @@ class Game extends React.Component {
           </button>
         </div>
         <div className={classes.itemBlockRight}>
-          {this.props.listLogs.map((item,index) => {
+          {this.props.listLogs.map((item, index) => {
             return <div>
               <button onClick={() => {
                 this.onShowHistory(item.id, item.history)
