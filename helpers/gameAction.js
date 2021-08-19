@@ -196,7 +196,7 @@ const gameAction = async (socket, isMine) => {
   }
 
 
-  console.log(gamesMap[gameId.gameid])
+  // console.log(gamesMap[gameId.gameid])
 // socketsMap[gameId.gameid]
 
 
@@ -289,7 +289,7 @@ const gameAction = async (socket, isMine) => {
 
 
   if (counterOpenedCells === counterCells - (+game.amountofmines)) {
-    console.log(usersStateMap[gameId.gameid]);
+    // console.log(usersStateMap[gameId.gameid]);
 
     let listUsersInGame = await Tabs.findAll({
       where: {
@@ -383,7 +383,7 @@ const gameAction = async (socket, isMine) => {
     socketsMap[item.tabid].emit('game/listLogs', {history})
   })
 
-  console.log(gamesMap[gameId.gameid])
+  // console.log(gamesMap[gameId.gameid])
 }
 
 module.exports = gameAction;

@@ -380,7 +380,7 @@ io.on("connection", async (socket) => {
                     })
                     await newAction.save();
                     await gameAction(socket, isMine);
-                    break outer;
+                    return;
                   }
                 }
 
@@ -394,6 +394,48 @@ io.on("connection", async (socket) => {
         amountMinesUnderFlags++;
       }
     }
+
+    // let counterIsClicksFlags = 0;
+    // outer: for (let i = 0; i < 3; i++) {
+    //   for (let j = 0; j < 3; j++) {
+    //     if (table[data.i - 1 + i] && table[data.i - 1 + i][data.j - 1 + j]) {
+    //       if (table[data.i - 1 + i][data.j - 1 + j].isOpen === false && table[data.i - 1 + i][data.j - 1 + j].isMine) {
+    //
+    //         for (let m = 0; m < data.minesCoordinate.length; m++) {
+    //           if ((data.i - 1 + i !== data.minesCoordinate[m][0]) || (data.j - 1 + j !== data.minesCoordinate[m][1])) {
+    //             counterIsClicksFlags++;
+    //           }
+    //           if (counterIsClicksFlags === data.minesCoordinate.length) {
+    //
+    //             table[data.i - 1 + i][data.j - 1 + j].isOpen = true;
+    //             table[data.i - 1 + i][data.j - 1 + j].isBlownUp = true;
+    //             tableClient[data.i - 1 + i][data.j - 1 + j].isOpen = true;
+    //             tableClient[data.i - 1 + i][data.j - 1 + j].isMine = true;
+    //             tableClient[data.i - 1 + i][data.j - 1 + j].isBlownUp = true;
+    //
+    //             table[data.i - 1 + i][data.j - 1 + j].userId = socket.user.userid;
+    //             tableClient[data.i - 1 + i][data.j - 1 + j].userId = socket.user.userid;
+    //
+    //             isMine = true;
+    //             let newAction = History.build({
+    //               gameid: gameId.gameid,
+    //               type: 'action',
+    //               history: {i: data.i - 1 + i, j: data.j - 1 + j},
+    //               username: user.username,
+    //               userid: user.userid,
+    //               amountofmines: +gamesMap[gameId.gameid][data.i][data.j].amountOfMines
+    //             })
+    //             await newAction.save();
+    //             await gameAction(socket, isMine);
+    //             return;
+    //           }
+    //         }
+    //
+    //       }
+    //     }
+    //   }
+    // }
+
     if (amountMinesUnderFlags === data.minesCoordinate.length) {
 
       for (let i = 0; i < 3; i++) {
