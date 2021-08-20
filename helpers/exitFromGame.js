@@ -110,7 +110,7 @@ module.exports = async (socket) => {
     }
   })
 
-  if (usersStateMap[gameid] [socket.handshake.query.tabId]) {
+  if (usersStateMap[gameid][socket.handshake.query.tabId]) {
     usersStateMap[gameid][socket.handshake.query.tabId].isReady = false;
   }
 

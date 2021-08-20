@@ -189,7 +189,7 @@ const gameAction = async (socket, isMine) => {
   for (let i = 0; i < gamesMap[gameId.gameid].length; i++) {
     for (let j = 0; j < gamesMap[gameId.gameid][0].length; j++) {
       counterCells++;
-      if (gamesMap[gameId.gameid][i][j].isOpen === true) {
+      if (gamesMap[gameId.gameid][i][j].isOpen && !gamesMap[gameId.gameid][i][j].isMine) {
         counterOpenedCells++;
       }
     }

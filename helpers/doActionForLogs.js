@@ -21,6 +21,7 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
   }
   let arr = [];
   let table = JSON.parse(JSON.stringify(game));
+  let tableTmp = JSON.parse(JSON.stringify(gamesMap[gameId]));
   // let tableClientInitial = JSON.parse(JSON.stringify(gamesMapClientInitial[gameId]));
   if (table[i][j].isMine) {
     table[i][j].isOpen = true;
@@ -39,7 +40,7 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
     return game;
   }
   if (table[i][j].amountOfMines !== 0) {
-    if(!table[i][j].isOpen) {
+    if(!table[i][j].isOpen && !table[i][j].userId) {
       table[i][j].userId = userId;
       gamesMapClientHistory[gameId][i][j].userId = userId;
     }
@@ -58,13 +59,13 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
   while (arr.length > 0) {
 
     let element = arr.shift();
-
-    gamesMapClientHistory[gameId][element.i][element.j].isOpen = true;
-    table[element.i][element.j].isOpen = true;
-    if (!table[element.i][element.j].userId) {
+    if (!table[element.i][element.j].userId && !table[element.i][element.j].isOpen) {
       gamesMapClientHistory[gameId][element.i][element.j].userId = userId;
       table[element.i][element.j].userId = userId;
     }
+    gamesMapClientHistory[gameId][element.i][element.j].isOpen = true;
+    table[element.i][element.j].isOpen = true;
+
 
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -72,12 +73,13 @@ const doActionForLogs = ({i, j}, game, userId, gameId) => {
           if (table[element.i - 1 + i][element.j - 1 + j].amountOfMines === 0 && table[element.i - 1 + i][element.j - 1 + j].isOpen === false) {
             arr.push(table[element.i - 1 + i][element.j - 1 + j])
           }
-          gamesMapClientHistory[gameId][element.i - 1 + i][element.j - 1 + j].isOpen = true;
-          table[element.i - 1 + i][element.j - 1 + j].isOpen = true;
-          if (!table[element.i - 1 + i][element.j - 1 + j].userId) {
+          if (!table[element.i - 1 + i][element.j - 1 + j].userId && !table[element.i - 1 + i][element.j - 1 + j].isOpen) {
             table[element.i - 1 + i][element.j - 1 + j].userId = userId;
             gamesMapClientHistory[gameId][element.i - 1 + i][element.j - 1 + j].userId = userId;
           }
+          gamesMapClientHistory[gameId][element.i - 1 + i][element.j - 1 + j].isOpen = true;
+          table[element.i - 1 + i][element.j - 1 + j].isOpen = true;
+
         }
       }
     }
