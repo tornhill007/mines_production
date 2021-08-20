@@ -12,7 +12,7 @@ class EditModal extends React.Component {
       fieldSize: '3x3',
       gameName: '',
       maxPlayers: 10,
-      minesAmount: 1,
+      minesAmount: 2,
     }
   }
 

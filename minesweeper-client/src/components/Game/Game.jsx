@@ -98,6 +98,7 @@ class Game extends React.Component {
     const sendDoubleAction = (e, i, j) => {
       // e.stopImmediatePropagation();
       // this.props.tableTwoDimensional[i][j]
+      console.log(5)
       let table = JSON.parse(JSON.stringify(this.props.tableTwoDimensional));
       let amountMines = 0;
       let minesCoordinate = [];
@@ -145,12 +146,13 @@ class Game extends React.Component {
 
       console.log("minesCoordinate", minesCoordinate)
 
-      if (amountMines != table[i][j].amountOfMines) {
-        return
-      }
-      // if(!table[i][j].isOpen) {
-      //   return;
+      // if (amountMines != table[i][j].amountOfMines) {
+      //   return
       // }
+      if (!table[i][j].isOpen) {
+        console.log(1)
+        return;
+      }
 
       this.props.socket.emit("game/double/action", {minesCoordinate, i, j}, (data) => {
 

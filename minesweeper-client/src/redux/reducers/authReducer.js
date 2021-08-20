@@ -63,7 +63,7 @@ export const login = (password, userName) => async (dispatch) => {
         }
     }
     catch (err) {
-        // alert(err.response.data.message)
+        alert(err.response.data.message)
         console.log("err", err);
     }
 
